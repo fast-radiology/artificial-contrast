@@ -8,13 +8,17 @@ CODES = ['no_contrast', 'contrast']
 
 
 def get_scans(data_path):
-    patients = sorted(os.listdir(bc_and_segmentation_path))
+    patients = sorted(os.listdir(data_path))
 
     for patient in patients:
         bc_dir = Path(data_path / patient / 'BC')
         scans += [str(p) for p in bc_dir.ls()]
 
     return sorted(scans)
+
+
+def get_patients(data_path):
+    return orted(os.listdir(data_path))
 
 
 def get_y_fn(path):
