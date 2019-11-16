@@ -2,6 +2,7 @@ import os
 import argparse
 
 from fast_radiology.seed import random_seed
+
 random_seed(42)
 
 import torch
@@ -9,6 +10,7 @@ import fastai
 from fastai.vision import *
 from fastai.distributed import *
 
+from fast_radiology.metrics import dice
 from artificial_contrast.dicom import open_dcm_image, open_dcm_mask
 from artificial_contrast.data import get_scans, get_data
 from artificial_contrast.learner import get_learner
@@ -43,15 +45,13 @@ BS = 20
 
 scans = get_scans(data_path)
 patients = get_patients(data_path)
-validation_patients = [
-    f'P{i}B{i}' for i in range(10) if f'P{i}B{i}' in patients
-]
+validation_patients = [f'P{i}B{i}' for i in range(10) if f'P{i}B{i}' in patients]
 
 print('Number of patients: ', len(patients))
 print('Validation patients: ', validation_patients)
 
 data = get_data(scans, HOME_PATH)
-learn = get_learner(data)
+learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 learn = learn.to_distributed(args.local_rank)
 
 learn.fit_one_cycle(20, 1e-4)
