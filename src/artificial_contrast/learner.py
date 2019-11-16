@@ -1,6 +1,6 @@
 from fastai.vision import unet_learner, models
 
-from fast_radiology.losses import generalized_dice_loss, USE_GPU
+from fast_radiology.losses import generalized_dice_loss
 
 
 def get_learner(data, metrics=None, model_save_path='models', loss_func=None):
