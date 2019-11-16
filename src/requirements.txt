@@ -1,0 +1,1 @@
+-e git://github.com/fast-radiology/fast-radiology.git#egg=fast_radiology\&subdirectory=src
