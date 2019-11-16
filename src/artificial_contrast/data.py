@@ -8,6 +8,8 @@ CODES = ['no_contrast', 'contrast']
 
 
 def get_scans(data_path):
+    scans = []
+
     patients = sorted(os.listdir(data_path))
 
     for patient in patients:
@@ -18,7 +20,7 @@ def get_scans(data_path):
 
 
 def get_patients(data_path):
-    return orted(os.listdir(data_path))
+    return sorted(os.listdir(data_path))
 
 
 def get_y_fn(path):
