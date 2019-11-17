@@ -32,9 +32,9 @@ torch.distributed.init_process_group(backend='nccl', init_method='env://')
 
 # Config
 
-HOME_PATH = os.environ('HOME')
-DATA_PATH = os.environ('DATA')
-MODEL_SAVE_PATH = os.environ('MODEL_SAVE')
+HOME_PATH = os.environ['HOME']
+DATA_PATH = os.environ['DATA']
+MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 data_path = Path(DATA_PATH)
 
 IMG_SIZE = 512
