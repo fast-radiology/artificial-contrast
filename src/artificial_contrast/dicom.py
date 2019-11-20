@@ -9,7 +9,7 @@ def read_HU_array(fn):
     if not isinstance(fn, str):
         fn = str(fn)
     dcm = pydicom.dcmread(fn)
-    return dcm.pixel_array * dcm.RescaleSlope + dcm.RescaleIntercept
+    return dcm.pixel_array.astype(np.float32) * dcm.RescaleSlope + dcm.RescaleIntercept
 
 
 def _normalize(array, window_min, window_max):
