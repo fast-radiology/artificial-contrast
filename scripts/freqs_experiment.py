@@ -2,8 +2,9 @@ import os
 import argparse
 
 from fast_radiology.seed import random_seed
+from artificial_contrast.settings import SEED
 
-random_seed(42)
+random_seed(SEED)
 
 import torch
 import fastai

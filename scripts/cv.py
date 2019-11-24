@@ -2,8 +2,8 @@ import os
 import argparse
 
 from fast_radiology.seed import random_seed
+from artificial_contrast.settings import SEED
 
-SEED = 42
 random_seed(SEED)
 
 import torch
@@ -62,4 +62,3 @@ for train_index, val_index in kfold.split(patients):
     learn = learn.to_distributed(args.local_rank)
 
     learn.fit_one_cycle(10, 1e-4)
-

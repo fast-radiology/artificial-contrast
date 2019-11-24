@@ -5,6 +5,8 @@ from fastai.vision import *
 
 from artifical_contrast.dicom import read_HU_array
 from artifical_contrast.freqs import freqhist_bins, hist_scaled_img
+from artificial_contrast.settings import SEED
+
 
 DATA_PATH = 'unet2d/data/bc_and_segmentation_133'
 WINDOWS = [-300, 300]
@@ -17,7 +19,7 @@ patients_s = pd.Series(sorted(os.listdir(bc_and_segmentation_path)))
 patients_s = patients_s[patients_s != 'P2B2']
 
 # P2B2 is removed so we can just sample
-for patient in patients_s.sample(1, random_state=42).tolist():
+for patient in patients_s.sample(1, random_state=SEED).tolist():
     print(f'Patient: {patient}')
     bc_dir = Path(bc_and_segmentation_path / patient / 'BC')
     scans += [str(p) for p in bc_dir.ls()]
