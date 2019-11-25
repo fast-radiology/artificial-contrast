@@ -1,9 +1,8 @@
 import os
-from pathlib import Path
 
 import pandas as pd
 
-from fastai.vision import get_transforms, SegmentationItemList
+from fastai.vision import get_transforms, Path, SegmentationItemList
 from artificial_contrast.settings import TEST_SET_EXAMINATIONS
 
 

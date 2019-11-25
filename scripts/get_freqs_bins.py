@@ -9,7 +9,7 @@ from artificial_contrast.freqs import freqhist_bins, hist_scaled_img
 from artificial_contrast.settings import SEED
 
 
-DATA_PATH = os.environ['DATA']
+DATA_PATH = Path(os.environ['DATA'])
 FREQS_NAME = os.environ.get('FREQS_NAME', 'freqs.npy')
 WINDOWS = [-100, 300]
 
