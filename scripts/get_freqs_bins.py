@@ -3,9 +3,9 @@ import numpy as np
 # monkey patch Path
 from fastai.vision import *
 
-from artifical_contrast.data import get_scans
-from artifical_contrast.dicom import read_HU_array
-from artifical_contrast.freqs import freqhist_bins, hist_scaled_img
+from artificial_contrast.data import get_scans
+from artificial_contrast.dicom import read_HU_array
+from artificial_contrast.freqs import freqhist_bins, hist_scaled_img
 from artificial_contrast.settings import SEED
 
 
