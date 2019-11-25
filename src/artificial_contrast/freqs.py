@@ -15,9 +15,9 @@ def freqhist_bins(examination_tensor: Tensor, n_bins: int = 100):
     sorted_values = examination_tensor.view(-1).sort()[0]
     t = torch.cat(
         [
-            tensor([0.001]),
+            Tensor([0.001]),
             torch.arange(n_bins).float() / n_bins + (1 / 2 / n_bins),
-            tensor([0.999]),
+            Tensor([0.999]),
         ]
     )
     t = (len(sorted_values) * t).long()

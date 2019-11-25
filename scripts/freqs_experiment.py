@@ -23,7 +23,7 @@ DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 data_path = Path(DATA_PATH)
 
-WINDOWS = [-300, 300]
+WINDOWS = [-100, 300]
 IMG_SIZE = 512
 BS = 20
 
