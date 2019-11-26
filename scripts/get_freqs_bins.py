@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 import torch
 
@@ -14,14 +15,24 @@ DATA_PATH = Path(os.environ['DATA'])
 FREQS = os.environ.get('FREQS', 'freqs.npy')
 WINDOWS = [-100, 300]
 
+
+def remove_outside_window(
+    tensor: torch.Tensor, windows: List[int] = WINDOWS
+) -> torch.Tensor:
+    min_val, max_val = windows
+    tensor = tensor[(tensor >= min_val) & (tensor <= max_val)]
+    return tensor
+
+
 scans = get_scans(DATA_PATH, test=False)
 sample_dcms = torch.stack(
-    tuple([torch.tensor(read_HU_array(fn)) for fn in sorted(scans)])
+    tuple(
+        [
+            remove_outside_window(torch.tensor(read_HU_array(fn)), WINDOWS)
+            for fn in sorted(scans)
+        ]
+    )
 )
-
-if WINDOWS:
-    min_val, max_val = WINDOWS
-    sample_dcms = sample_dcms[(sample_dcms >= min_val) & (sample_dcms <= max_val)]
 
 freqs = freqhist_bins(sample_dcms)
 np.save(FREQS, freqs.numpy())
