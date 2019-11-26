@@ -56,7 +56,7 @@ def interp_1d(x: Tensor, xp: Tensor, fp: Tensor):
 def open_dcm_img_factory(windows: List[float], freqs: Tensor) -> Callable:
     def open_dcm_image(file_name, *args, **kwargs) -> Image:
         min_val, max_val = windows
-        arr = hist_scaled_px(file_name, freqs, min_val, max_val)
+        arr = hist_scaled_img(file_name, freqs, min_val, max_val)
         return Image(arr.repeat(3, 1, 1))
 
     return open_dcm_image
