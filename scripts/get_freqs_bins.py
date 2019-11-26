@@ -11,7 +11,7 @@ from artificial_contrast.settings import SEED
 
 
 DATA_PATH = Path(os.environ['DATA'])
-FREQS_NAME = os.environ.get('FREQS_NAME', 'freqs.npy')
+FREQS = os.environ.get('FREQS', 'freqs.npy')
 WINDOWS = [-100, 300]
 
 scans = get_scans(DATA_PATH, test=False)
@@ -24,7 +24,7 @@ if WINDOWS:
     sample_dcms = sample_dcms[(sample_dcms >= min_val) & (sample_dcms <= max_val)]
 
 freqs = freqhist_bins(sample_dcms)
-np.save(FREQS_NAME, freqs.numpy())
+np.save(FREQS, freqs.numpy())
 
 scaled_samples = torch.stack(
     tuple([hist_scaled_img(scan, freq_bins=freqs) for scan in scans])

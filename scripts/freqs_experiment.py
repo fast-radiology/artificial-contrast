@@ -21,6 +21,8 @@ from artificial_contrast.learner import get_learner
 HOME_PATH = os.environ['HOME']
 DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
+FREQS_PATH = os.environ['FREQS_NAME']
+
 data_path = Path(DATA_PATH)
 
 WINDOWS = [-100, 300]
@@ -28,7 +30,6 @@ IMG_SIZE = 512
 BS = 20
 
 
-FREQS_PATH = os.environ['FREQS']
 freqs = torch.Tensor(np.load(FREQS_PATH))
 
 open_dcm_image = open_dcm_img_factory(WINDOWS, freqs)
@@ -51,7 +52,8 @@ torch.distributed.init_process_group(backend='nccl', init_method='env://')
 # Experiment
 scans = get_scans(data_path)
 patients = get_patients(data_path)
-validation_patients = [f'P{i}B{i}' for i in range(10) if f'P{i}B{i}' in patients]
+
+validation_patients = patients[:12]
 
 print('Number of patients: ', len(patients))
 print('Validation patients: ', validation_patients)
@@ -70,10 +72,12 @@ data = get_data(
     HOME_PATH,
     validation_patients,
     bs=BS,
-    normalize_stats=([0.1751], [0.3180]),
+    normalize_stats=([0.1937], [0.3295]),
     tfms=tfms,
 )
-learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH, pretrained=True)
+learn = get_learner(
+    data, metrics=[dice], model_save_path=MODEL_SAVE_PATH, pretrained=True
+)
 learn = learn.to_distributed(args.local_rank)
 learn.unfreeze()
 
