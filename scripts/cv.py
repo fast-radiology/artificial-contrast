@@ -9,6 +9,7 @@ random_seed(SEED)
 import torch
 import fastai
 import numpy as np
+import pandas as pd
 from fastai.vision import *
 from fastai.distributed import *
 from sklearn.model_selection import KFold
@@ -63,3 +64,44 @@ for train_index, val_index in kfold.split(patients):
 
     learn.fit_one_cycle(10, 1e-4)
 
+    preds, targets = learn.get_preds()
+
+    preds_df = pd.DataFrame(
+        {
+            'preds': [
+                preds[i].argmax(0).view(1, size, size).int().numpy()
+                for i in range(len(preds))
+            ],
+            'targets': [
+                targets[i].view(1, size, size).int().numpy()
+                for i in range(len(targets))
+            ],
+            'path': learn.data.valid_ds.items,
+        }
+    )
+
+    fold_results = []
+
+    for val_patient in validation_patients:
+        val_pred_3d = torch.tensor(
+            preds_df[preds_df['path'].str.contains(val_patient)]
+            .sort_values('path')['preds']
+            .to_list()
+        )
+        val_pred_3d = val_pred_3d.view(-1, size, size)
+        val_target_3d = torch.tensor(
+            preds_df[preds_df['path'].str.contains(val_patient)]
+            .sort_values('path')['targets']
+            .to_list()
+        )
+        val_target_3d = val_target_3d.view(-1, size, size)
+
+        patient_dice = dice3D(val_pred_3d, val_target_3d)
+
+        fold_results.append({'patient': val_patient, 'dice': patient_dice})
+
+    fold_results_df = pd.DataFrame(fold_results)
+    print(fold_results_df)
+    print(
+        f"mean: {fold_results_df['dice'].mean()}, std: {fold_results_df['dice'].std()}"
+    )
