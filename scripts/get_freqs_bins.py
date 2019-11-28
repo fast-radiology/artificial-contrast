@@ -25,7 +25,7 @@ def remove_outside_window(
 
 
 scans = get_scans(DATA_PATH, test=False)
-sample_dcms = torch.stack(
+sample_dcms = torch.cat(
     tuple(
         [
             remove_outside_window(torch.tensor(read_HU_array(fn)), WINDOWS)
