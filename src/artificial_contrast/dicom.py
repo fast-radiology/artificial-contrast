@@ -18,23 +18,21 @@ def _normalize(array, window_min, window_max):
     )
 
 
-# TODO: Generalize
-# TODO: Add hist normalized method
-WINDOWS = [(-100, 100), (0, 200), (100, 300)]
+def open_dcm_image_factory(conf):
+    def open_dcm_image(file_name, *args, **kwargs) -> Image:
+        arr = read_HU_array(file_name)
 
+        windowed_arrays = []
+        for window_min, window_max in conf['windows']:
+            array = np.clip(arr, a_min=window_min, a_max=window_max)
+            array = _normalize(array, window_min, window_max)
 
-def open_dcm_image(file_name, *args, **kwargs) -> Image:
-    arr = read_HU_array(file_name)
+            windowed_arrays.append(array)
 
-    windowed_arrays = []
-    for window_min, window_max in WINDOWS:
-        array = np.clip(arr, a_min=window_min, a_max=window_max)
-        array = _normalize(array, window_min, window_max)
+        final_array = np.dstack(windowed_arrays)
+        return Image(pil2tensor(final_array, np.float32).div_(255))
 
-        windowed_arrays.append(array)
-
-    final_array = np.dstack(windowed_arrays)
-    return Image(pil2tensor(final_array, np.float32).div_(255))
+    return open_dcm_image_factory
 
 
 def open_dcm_mask(path, *args, **kwargs) -> Image:
