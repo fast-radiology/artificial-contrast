@@ -21,7 +21,7 @@ from artificial_contrast.learner import get_learner
 HOME_PATH = os.environ['HOME']
 DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
-FREQS_PATH = os.environ['FREQS_NAME']
+FREQS_PATH = os.environ['FREQS']
 
 data_path = Path(DATA_PATH)
 
