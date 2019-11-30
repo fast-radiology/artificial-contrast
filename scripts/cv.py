@@ -69,11 +69,11 @@ for train_index, val_index in kfold.split(patients):
     preds_df = pd.DataFrame(
         {
             'preds': [
-                preds[i].argmax(0).view(1, size, size).int().numpy()
+                preds[i].argmax(0).view(1, IMG_SIZE, IMG_SIZE).int().numpy()
                 for i in range(len(preds))
             ],
             'targets': [
-                targets[i].view(1, size, size).int().numpy()
+                targets[i].view(1, IMG_SIZE, IMG_SIZE).int().numpy()
                 for i in range(len(targets))
             ],
             'path': learn.data.valid_ds.items,
@@ -88,13 +88,13 @@ for train_index, val_index in kfold.split(patients):
             .sort_values('path')['preds']
             .to_list()
         )
-        val_pred_3d = val_pred_3d.view(-1, size, size)
+        val_pred_3d = val_pred_3d.view(-1, IMG_SIZE, IMG_SIZE)
         val_target_3d = torch.tensor(
             preds_df[preds_df['path'].str.contains(val_patient)]
             .sort_values('path')['targets']
             .to_list()
         )
-        val_target_3d = val_target_3d.view(-1, size, size)
+        val_target_3d = val_target_3d.view(-1, IMG_SIZE, IMG_SIZE)
 
         patient_dice = dice3D(val_pred_3d, val_target_3d)
 
