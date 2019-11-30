@@ -3,8 +3,8 @@ import argparse
 import json
 
 from fast_radiology.seed import random_seed
+from artificial_contrast.settings import SEED
 
-SEED = 42
 random_seed(SEED)
 
 import torch
