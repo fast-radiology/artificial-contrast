@@ -34,7 +34,9 @@ from sklearn.model_selection import KFold
 
 N_FOLDS = 10
 STANDARD_WINDOWS = [-100, 300]
+DATA_PATH = os.environ['DATA']
 
+data_path = Path(DATA_PATH)
 patients = np.array(get_patients(data_path))
 
 assert len(patients) == 120
