@@ -64,7 +64,12 @@ def interp_1d(x: Tensor, xp: Tensor, fp: Tensor):
 
 
 def get_freqs_array(path: str, conf: Dict[str, object]) -> torch.Tensor:
-    min_val, max_val = conf[WINDOWS]
+    min_val = None
+    max_val = None
+    windows = conf[WINDOWS]
+    if windows:
+        min_val, max_val = windows
+
     freqs = torch.tensor(conf[FREQS])
     return hist_scaled_img(path, freqs, min_val, max_val)
 
