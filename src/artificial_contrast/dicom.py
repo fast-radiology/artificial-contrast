@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 
 from fastai.vision import Image, ImageSegment, pil2tensor
+from artificial_contrast.const import WINDOWS
 
 
 def read_HU_array(fn):
@@ -23,7 +24,7 @@ def open_dcm_image_factory(conf):
         arr = read_HU_array(file_name)
 
         windowed_arrays = []
-        for window_min, window_max in conf['windows']:
+        for window_min, window_max in conf[WINDOWS]:
             array = np.clip(arr, a_min=window_min, a_max=window_max)
             array = _normalize(array, window_min, window_max)
 

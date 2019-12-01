@@ -2,7 +2,7 @@ import os
 import argparse
 
 from fast_radiology.seed import random_seed
-from artificial_contrast.settings import SEED
+from artificial_contrast.const import SEED
 
 random_seed(SEED)
 

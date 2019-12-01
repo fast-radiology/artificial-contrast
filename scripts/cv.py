@@ -3,7 +3,7 @@ import argparse
 import json
 
 from fast_radiology.seed import random_seed
-from artificial_contrast.settings import SEED
+from artificial_contrast.const import SEED
 
 random_seed(SEED)
 
@@ -21,7 +21,18 @@ from artificial_contrast.dicom import (
 )
 from artificial_contrast.data import get_scans, get_data
 from artificial_contrast.learner import get_learner
-
+from artificial_contrast.const import (
+    DICE_NAME,
+    FREQS_LIMIT_WINDOWS,
+    FREQS_NO_LIMIT_WINDOWS,
+    PATH_NAME,
+    PATIENT_NAME,
+    PREDICTIONS_NAME,
+    SIMPLE_MULTIPLE_WINDOWS,
+    SIMPLE_WINDOW_SMALL,
+    TARGETS_NAME,
+    VALIDATION_PATIENTS,
+)
 
 fastai.vision.image.open_mask = open_dcm_mask
 fastai.vision.data.open_mask = open_dcm_mask
@@ -51,10 +62,10 @@ BS = 20
 
 
 DCM_LOAD_FUNC = {
-    'simple_window_-100_300': simple_open_dcm_image_factory,
-    'simple_multiple_windows': simple_open_dcm_image_factory,
-    # 'freqs_no_limit_window': freqs_open_dcm_image_factory,
-    # 'freqs_window_-100_300': freqs_open_dcm_image_factory,
+    SIMPLE_WINDOW_SMALL: simple_open_dcm_image_factory,
+    SIMPLE_MULTIPLE_WINDOWS: simple_open_dcm_image_factory,
+    # FREQS_NO_LIMIT_WINDOWS: freqs_open_dcm_image_factory,
+    # FREQS_LIMIT_WINDOWS: freqs_open_dcm_image_factory,
 }
 
 
@@ -71,7 +82,7 @@ for idx, fold in folds_df.iterrows():
     fastai.vision.data.open_image = open_dcm_image_func
     open_image = open_dcm_image_func
 
-    validation_patients = fold['validation_patients']
+    validation_patients = fold[VALIDATION_PATIENTS]
     print('Validation patients: ', validation_patients)
 
     data = get_data(scans, HOME_PATH, validation_patients, bs=BS)
@@ -84,15 +95,15 @@ for idx, fold in folds_df.iterrows():
 
     preds_df = pd.DataFrame(
         {
-            'preds': [
+            PREDICTIONS_NAME: [
                 preds[i].argmax(0).view(1, IMG_SIZE, IMG_SIZE).int().numpy()
                 for i in range(len(preds))
             ],
-            'targets': [
+            TARGETS_NAME: [
                 targets[i].view(1, IMG_SIZE, IMG_SIZE).int().numpy()
                 for i in range(len(targets))
             ],
-            'path': learn.data.valid_ds.items,
+            PATH_NAME: learn.data.valid_ds.items,
         }
     )
 
@@ -100,24 +111,24 @@ for idx, fold in folds_df.iterrows():
 
     for val_patient in validation_patients:
         val_pred_3d = torch.tensor(
-            preds_df[preds_df['path'].str.contains(val_patient)]
-            .sort_values('path')['preds']
+            preds_df[preds_df[PATH_NAME].str.contains(val_patient)]
+            .sort_values(PATH_NAME)[PREDICTIONS_NAME]
             .to_list()
         )
         val_pred_3d = val_pred_3d.view(-1, IMG_SIZE, IMG_SIZE)
         val_target_3d = torch.tensor(
-            preds_df[preds_df['path'].str.contains(val_patient)]
-            .sort_values('path')['targets']
+            preds_df[preds_df[PATH_NAME].str.contains(val_patient)]
+            .sort_values(PATH_NAME)[TARGETS_NAME]
             .to_list()
         )
         val_target_3d = val_target_3d.view(-1, IMG_SIZE, IMG_SIZE)
 
         patient_dice = dice3D(val_pred_3d, val_target_3d)
 
-        fold_results.append({'patient': val_patient, 'dice': patient_dice.item()})
+        fold_results.append({PATIENT_NAME: val_patient, DICE_NAME: patient_dice.item()})
 
     fold_results_df = pd.DataFrame(fold_results)
     print(fold_results_df)
     print(
-        f"mean: {fold_results_df['dice'].mean()}, std: {fold_results_df['dice'].std()}"
+        f"mean: {fold_results_df[DICE_NAME].mean()}, std: {fold_results_df[DICE_NAME].std()}"
     )

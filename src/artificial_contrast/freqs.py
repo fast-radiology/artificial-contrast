@@ -6,13 +6,14 @@ from torch import Tensor
 from fastai.vision import Image
 
 from artificial_contrast.dicom import read_HU_array
+from artificial_contrast.const import FREQS, WINDOWS
 
 
 def freqhist_bins(examination_tensor: Tensor, n_bins: int = 100):
     """
     Use it to generate frequency histogram
     """
-    sorted_values = examination_tensor.view(-1).sort()[0]
+    sorted_values = examination_tensor.sort()[0]
     t = torch.cat(
         [
             Tensor([0.001]),
@@ -22,6 +23,15 @@ def freqhist_bins(examination_tensor: Tensor, n_bins: int = 100):
     )
     t = (len(sorted_values) * t).long()
     return sorted_values[t].unique()
+
+
+def remove_voxels_outside_window(
+    tensor: torch.Tensor, windows: List[int] = None
+) -> torch.Tensor:
+    if windows:
+        min_val, max_val = windows
+        tensor = tensor[(tensor >= min_val) & (tensor <= max_val)]
+    return tensor.view(-1)
 
 
 def hist_scaled_img(
@@ -53,10 +63,15 @@ def interp_1d(x: Tensor, xp: Tensor, fp: Tensor):
     return slopes[locs] * x + incx[locs]
 
 
-def open_dcm_img_factory(windows: List[float], freqs: Tensor) -> Callable:
-    def open_dcm_image(file_name, *args, **kwargs) -> Image:
-        min_val, max_val = windows
-        arr = hist_scaled_img(file_name, freqs, min_val, max_val)
+def get_freqs_array(path: str, conf: Dict[str, object]) -> torch.Tensor:
+    min_val, max_val = conf[WINDOWS]
+    freqs = torch.tensor(conf[FREQS])
+    return hist_scaled_img(path, freqs, min_val, max_val)
+
+
+def open_dcm_img_factory(conf: Dict[str, object]) -> Callable:
+    def open_dcm_image(path: str, *args, **kwargs) -> Image:
+        arr = get_freqs_array(path, conf)
         return Image(arr.repeat(3, 1, 1))
 
     return open_dcm_image

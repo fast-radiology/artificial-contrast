@@ -8,7 +8,7 @@ from fastai.vision import *
 from artificial_contrast.data import get_scans
 from artificial_contrast.dicom import read_HU_array
 from artificial_contrast.freqs import freqhist_bins, hist_scaled_img
-from artificial_contrast.settings import SEED
+from artificial_contrast.const import SEED
 
 
 DATA_PATH = Path(os.environ['DATA'])
