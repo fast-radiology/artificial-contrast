@@ -19,14 +19,14 @@ from artificial_contrast.freqs import (
     get_freqs_array,
 )
 from artificial_contrast.const import (
-    SEED,
-    TRAIN_PATIENTS,
-    VALIDATION_PATIENTS,
+    FOLDS_NAME,
     FREQS_LIMIT_WINDOWS,
     FREQS_NO_LIMIT_WINDOWS,
     FREQS,
-    WINDOWS,
     NORM_STATS,
+    TRAIN_PATIENTS,
+    VALIDATION_PATIENTS,
+    WINDOWS,
 )
 
 from sklearn.model_selection import KFold
@@ -71,6 +71,8 @@ for train_index, val_index in kfold.split(patients):
     # TODO remove [:2] after confirming it's working
     train_patients = patients[train_index][:2]
     val_patients = patients[val_index]
+    print(val_patients)
+
     result[TRAIN_PATIENTS] = train_patients.tolist()
     result[VALIDATION_PATIENTS] = val_patients.tolist()
 
@@ -79,3 +81,9 @@ for train_index, val_index in kfold.split(patients):
     # freqs
     result[FREQS_NO_LIMIT_WINDOWS] = get_freqs_method_dict(scans, None)
     result[FREQS_LIMIT_WINDOWS] = get_freqs_method_dict(scans, STANDARD_WINDOWS)
+
+    folds.append(result)
+    print(result)
+
+
+pd.DataFrame(folds).to_csv(FOLDS_NAME, encoding='utf-8', index=False)
