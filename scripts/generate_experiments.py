@@ -47,7 +47,7 @@ def get_freqs_method_dict(scans: List[str], windows: List[int]) -> Dict[str, obj
     sample_dcms = torch.cat(
         tuple(
             [
-                remove_outside_window(torch.tensor(read_HU_array(fn)), windows)
+                remove_voxels_outside_window(torch.tensor(read_HU_array(fn)), windows)
                 for fn in sorted(scans)
             ]
         )
