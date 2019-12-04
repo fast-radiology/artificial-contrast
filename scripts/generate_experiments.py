@@ -115,6 +115,7 @@ for train_index, val_index in kfold.split(patients):
     # result[FREQS_LIMIT_WINDOWS] = get_freqs_method_dict(scans, STANDARD_WINDOWS)
 
     result[SIMPLE_WINDOW_SMALL] = get_standard_method_dict(scans, STANDARD_WINDOWS)
+    result[SIMPLE_MULTIPLE_WINDOWS] = get_standard_method_dict(scans, EXTENDED_WINDOWS)
 
     get_standard_method_dict
     folds.append(result)
