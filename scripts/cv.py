@@ -14,7 +14,6 @@ import pandas as pd
 from fastai.vision import *
 from fastai.distributed import *
 
-from fast_radiology.metrics import dice as dice3D
 from artificial_contrast.dicom import (
     open_dcm_image_factory as simple_open_dcm_image_factory,
     open_dcm_mask,
@@ -22,17 +21,13 @@ from artificial_contrast.dicom import (
 from artificial_contrast.data import get_scans, get_data
 from artificial_contrast.learner import get_learner
 from artificial_contrast.const import (
-    DICE_NAME,
     FREQS_LIMIT_WINDOWS,
     FREQS_NO_LIMIT_WINDOWS,
-    PATH_NAME,
-    PATIENT_NAME,
-    PREDICTIONS_NAME,
     SIMPLE_MULTIPLE_WINDOWS,
     SIMPLE_WINDOW_SMALL,
-    TARGETS_NAME,
     VALIDATION_PATIENTS,
 )
+from artificial_contrast.evaluate import evaluate_patients
 
 fastai.vision.image.open_mask = open_dcm_mask
 fastai.vision.data.open_mask = open_dcm_mask
@@ -91,43 +86,7 @@ for idx, fold in folds_df.iterrows():
 
     learn.fit_one_cycle(10, 1e-4)
 
-    preds, targets = learn.get_preds()
-
-    preds_df = pd.DataFrame(
-        {
-            PREDICTIONS_NAME: [
-                preds[i].argmax(0).view(1, IMG_SIZE, IMG_SIZE).int().numpy()
-                for i in range(len(preds))
-            ],
-            TARGETS_NAME: [
-                targets[i].view(1, IMG_SIZE, IMG_SIZE).int().numpy()
-                for i in range(len(targets))
-            ],
-            PATH_NAME: learn.data.valid_ds.items,
-        }
-    )
-
-    fold_results = []
-
-    for val_patient in validation_patients:
-        val_pred_3d = torch.tensor(
-            preds_df[preds_df[PATH_NAME].str.contains(val_patient)]
-            .sort_values(PATH_NAME)[PREDICTIONS_NAME]
-            .to_list()
-        )
-        val_pred_3d = val_pred_3d.view(-1, IMG_SIZE, IMG_SIZE)
-        val_target_3d = torch.tensor(
-            preds_df[preds_df[PATH_NAME].str.contains(val_patient)]
-            .sort_values(PATH_NAME)[TARGETS_NAME]
-            .to_list()
-        )
-        val_target_3d = val_target_3d.view(-1, IMG_SIZE, IMG_SIZE)
-
-        patient_dice = dice3D(val_pred_3d, val_target_3d)
-
-        fold_results.append({PATIENT_NAME: val_patient, DICE_NAME: patient_dice.item()})
-
-    fold_results_df = pd.DataFrame(fold_results)
+    fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
     print(fold_results_df)
     print(
         f"mean: {fold_results_df[DICE_NAME].mean()}, std: {fold_results_df[DICE_NAME].std()}"
