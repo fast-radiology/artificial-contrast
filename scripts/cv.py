@@ -76,7 +76,7 @@ folds_df = pd.DataFrame(FOLDS_PATH)
 
 for idx, fold in folds_df.iterrows():
     conf = json.loads(fold[EXPERIMENT_NAME])
-    open_dcm_image_func = DCM_LOAD_FUNC(conf)
+    open_dcm_image_func = DCM_LOAD_FUNC[EXPERIMENT_NAME](conf)
 
     fastai.vision.image.open_image = open_dcm_image_func
     fastai.vision.data.open_image = open_dcm_image_func
