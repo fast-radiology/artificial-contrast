@@ -87,7 +87,7 @@ for idx, fold in folds_df.iterrows():
 
     data = get_data(scans, HOME_PATH, validation_patients, bs=BS)
     learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
-    learn = learn.to_distributed(args.local_rank)
+    # learn = learn.to_distributed(args.local_rank)
 
     learn.fit_one_cycle(10, 1e-4)
 
