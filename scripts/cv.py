@@ -76,7 +76,7 @@ folds_df = pd.DataFrame(FOLDS_PATH)
 
 for idx, fold in folds_df.iterrows():
     conf = json.loads(fold[EXPERIMENT_NAME])
-    open_dcm_image_func = DCM_LOAD_FUNC(conf)
+    open_dcm_image_func = DCM_LOAD_FUNC[EXPERIMENT_NAME](conf)
 
     fastai.vision.image.open_image = open_dcm_image_func
     fastai.vision.data.open_image = open_dcm_image_func
@@ -87,7 +87,7 @@ for idx, fold in folds_df.iterrows():
 
     data = get_data(scans, HOME_PATH, validation_patients, bs=BS)
     learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
-    learn = learn.to_distributed(args.local_rank)
+    # learn = learn.to_distributed(args.local_rank)
 
     learn.fit_one_cycle(10, 1e-4)
 
