@@ -1,5 +1,4 @@
 import os
-import argparse
 import json
 
 from fast_radiology.seed import random_seed
