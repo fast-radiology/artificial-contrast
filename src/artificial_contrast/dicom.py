@@ -33,7 +33,7 @@ def open_dcm_image_factory(conf):
         final_array = np.dstack(windowed_arrays)
         return Image(pil2tensor(final_array, np.float32).div_(255))
 
-    return open_dcm_image_factory
+    return open_dcm_image
 
 
 def open_dcm_mask(path, *args, **kwargs) -> Image:
