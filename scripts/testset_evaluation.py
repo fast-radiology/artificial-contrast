@@ -20,6 +20,7 @@ from artificial_contrast.dicom import (
 from artificial_contrast.data import get_scans, get_data, get_patients
 from artificial_contrast.learner import get_learner
 from artificial_contrast.const import (
+    DICE_NAME,
     FREQS_LIMIT_WINDOWS,
     FREQS_NO_LIMIT_WINDOWS,
     SIMPLE_MULTIPLE_WINDOWS,

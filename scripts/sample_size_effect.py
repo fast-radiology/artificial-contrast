@@ -21,7 +21,7 @@ from artificial_contrast.dicom import (
 )
 from artificial_contrast.data import get_scans, get_data, get_patients
 from artificial_contrast.learner import get_learner
-from artificial_contrast.const import WINDOWS
+from artificial_contrast.const import DICE_NAME, WINDOWS
 from artificial_contrast.evaluate import evaluate_patients
 
 fastai.vision.image.open_mask = open_dcm_mask
