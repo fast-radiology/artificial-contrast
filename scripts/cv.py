@@ -88,6 +88,7 @@ for idx, fold in folds_df.iterrows():
 
     fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
     print(fold_results_df)
+    # TODO: aggregate all results into DF
     print(
         f"mean: {fold_results_df[DICE_NAME].mean()}, std: {fold_results_df[DICE_NAME].std()}"
     )

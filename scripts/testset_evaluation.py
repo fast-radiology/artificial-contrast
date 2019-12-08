@@ -27,6 +27,9 @@ from artificial_contrast.const import (
 )
 from artificial_contrast.evaluate import evaluate_patients
 
+fastai.vision.image.open_mask = open_dcm_mask
+fastai.vision.data.open_mask = open_dcm_mask
+open_mask = open_dcm_mask
 
 # Config
 
@@ -91,4 +94,5 @@ learn.load(MODEL_NAME)
 eval_df = evaluate_patients(learn, test_patients, IMG_SIZE)
 
 print(eval_df)
+# TODO: aggregate all results into DF
 print(f"mean: {eval_df[DICE_NAME].mean()}, std: {eval_df[DICE_NAME].std()}")
