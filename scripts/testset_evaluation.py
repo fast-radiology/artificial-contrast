@@ -39,7 +39,6 @@ DCM_CONF_PATH = os.environ['DCM_CONF']
 
 data_path = Path(DATA_PATH)
 test_data_path = Path(TEST_DATA_PATH)
-train_data_path = Path(TRA)
 
 EXPERIMENT_NAME = os.envrion['EXPERIMENT_NAME']
 
