@@ -97,7 +97,7 @@ def get_standard_method_dict(scans: List[str], windows: List[int]) -> Dict[str, 
 
     stds = torch.sqrt(1 / (n_samples - 1) * torch.stack(variances).sum(axis=(0)))
 
-    return {WINDOWS: windows, NORM_STATS: (means, stds)}
+    return {WINDOWS: windows, NORM_STATS: (means.tolist(), stds.tolist())}
 
 
 folds = []
@@ -105,7 +105,8 @@ kfold = KFold(N_FOLDS, shuffle=True, random_state=SEED)
 for train_index, val_index in kfold.split(patients):
     result = {}
 
-    train_patients = patients[train_index]
+    # TODO remove [:10]
+    train_patients = patients[train_index][:10]
     val_patients = patients[val_index]
     print(val_patients)
 
