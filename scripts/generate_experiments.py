@@ -112,8 +112,7 @@ for train_index, val_index in kfold.split(patients):
     result[TRAIN_PATIENTS] = train_patients.tolist()
     result[VALIDATION_PATIENTS] = val_patients.tolist()
 
-    # TODO remove [:10]
-    scans = get_scans(data_path, patients=train_patients)[:10]
+    scans = get_scans(data_path, patients=train_patients)
 
     # freqs
     result[FREQS_NO_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, None))
