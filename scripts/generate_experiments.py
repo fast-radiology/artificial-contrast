@@ -105,15 +105,15 @@ kfold = KFold(N_FOLDS, shuffle=True, random_state=SEED)
 for train_index, val_index in kfold.split(patients):
     result = {}
 
-    # TODO remove [:10]
-    train_patients = patients[train_index][:10]
+    train_patients = patients[train_index]
     val_patients = patients[val_index]
     print(val_patients)
 
     result[TRAIN_PATIENTS] = train_patients.tolist()
     result[VALIDATION_PATIENTS] = val_patients.tolist()
 
-    scans = get_scans(data_path, patients=train_patients)
+    # TODO remove [:10]
+    scans = get_scans(data_path, patients=train_patients)[:10]
 
     # freqs
     result[FREQS_NO_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, None))
