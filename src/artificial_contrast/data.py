@@ -4,10 +4,7 @@ import os
 import pandas as pd
 
 from fastai.vision import get_transforms, Path, SegmentationItemList
-from artificial_contrast.const import (
-    BC_NAME,
-    LABEL_NAME,
-)
+from artificial_contrast.const import BC_NAME, LABEL_NAME
 
 
 CODES = ['no_contrast', 'contrast']
@@ -41,7 +38,14 @@ def get_data(
     scans, home_path, validation_patients, bs, size=512, normalize_stats=None, tfms=None
 ):
     if tfms is None:
-        tfms = get_transforms(max_rotate=5.0, max_lighting=0, p_lighting=0, max_warp=0)
+        tfms = get_transforms(
+            do_flip=True,
+            max_rotate=10.0,
+            max_lighting=0,
+            p_lighting=0,
+            max_warp=0,
+            max_zoom=1.2,
+        )
 
     data = (
         SegmentationItemList.from_df(pd.DataFrame(scans), home_path)
