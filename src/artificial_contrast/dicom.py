@@ -1,5 +1,4 @@
 import pydicom
-import cv2
 import numpy as np
 
 from fastai.vision import Image, ImageSegment, pil2tensor
