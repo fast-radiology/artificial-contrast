@@ -4,6 +4,7 @@ from artificial_contrast.const import SEED
 random_seed(SEED)
 
 from typing import List, Dict
+import json
 import numpy as np
 import torch
 
@@ -114,11 +115,12 @@ for train_index, val_index in kfold.split(patients):
     scans = get_scans(data_path, patients=train_patients)
 
     # freqs
-    result[FREQS_NO_LIMIT_WINDOWS] = get_freqs_method_dict(scans, None)
-    result[FREQS_LIMIT_WINDOWS] = get_freqs_method_dict(scans, STANDARD_WINDOWS)
+    result[FREQS_NO_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, None))
+    result[FREQS_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, STANDARD_WINDOWS))
 
-    result[SIMPLE_WINDOW_SMALL] = get_standard_method_dict(scans, STANDARD_WINDOWS)
-    result[SIMPLE_MULTIPLE_WINDOWS] = get_standard_method_dict(scans, EXTENDED_WINDOWS)
+    # simple
+    result[SIMPLE_WINDOW_SMALL] = json.dumps(get_standard_method_dict(scans, STANDARD_WINDOWS))
+    result[SIMPLE_MULTIPLE_WINDOWS] = json.dumps(get_standard_method_dict(scans, EXTENDED_WINDOWS))
 
     folds.append(result)
     print(result)
