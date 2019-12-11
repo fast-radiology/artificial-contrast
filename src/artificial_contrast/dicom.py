@@ -1,8 +1,8 @@
 import pydicom
-import cv2
 import numpy as np
 
 from fastai.vision import Image, ImageSegment, pil2tensor
+from artificial_contrast.const import WINDOWS
 
 
 def read_HU_array(fn):
@@ -23,7 +23,7 @@ def open_dcm_image_factory(conf):
         arr = read_HU_array(file_name)
 
         windowed_arrays = []
-        for window_min, window_max in conf['windows']:
+        for window_min, window_max in conf[WINDOWS]:
             array = np.clip(arr, a_min=window_min, a_max=window_max)
             array = _normalize(array, window_min, window_max)
 
@@ -32,7 +32,7 @@ def open_dcm_image_factory(conf):
         final_array = np.dstack(windowed_arrays)
         return Image(pil2tensor(final_array, np.float32).div_(255))
 
-    return open_dcm_image_factory
+    return open_dcm_image
 
 
 def open_dcm_mask(path, *args, **kwargs) -> Image:
