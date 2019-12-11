@@ -1,5 +1,5 @@
 import os
-import argparse
+# import argparse
 import json
 
 from fast_radiology.seed import random_seed
@@ -73,7 +73,7 @@ DCM_LOAD_FUNC = {
 # CV
 
 scans = get_scans(data_path)
-folds_df = pd.DataFrame(FOLDS_PATH)
+folds_df = pd.read_csv(FOLDS_PATH, encoding='utf-8')
 
 results = []
 
