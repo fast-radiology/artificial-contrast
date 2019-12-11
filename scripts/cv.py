@@ -56,7 +56,7 @@ MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 FOLDS_PATH = os.environ['FOLDS']
 data_path = Path(DATA_PATH)
 
-EXPERIMENT_NAME = os.envrion['EXPERIMENT_NAME']
+EXPERIMENT_NAME = os.environ['EXPERIMENT_NAME']
 
 IMG_SIZE = 512
 BS = 20
