@@ -11,7 +11,7 @@ from artificial_contrast.const import (
 )
 
 
-def evaluate_patients(learn, patients, img_size)
+def evaluate_patients(learn, patients, img_size):
     results = []
 
     preds, targets = learn.get_preds()
