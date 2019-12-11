@@ -4,6 +4,7 @@ from artificial_contrast.const import SEED
 random_seed(SEED)
 
 from typing import List, Dict
+import json
 import numpy as np
 import torch
 
@@ -39,7 +40,7 @@ from sklearn.model_selection import KFold
 
 
 N_FOLDS = 10
-STANDARD_WINDOWS = [-100, 300]
+STANDARD_WINDOWS = [[-100, 300], [-100, 300], [-100, 300]]
 EXTENDED_WINDOWS = [[-40, 120], [-100, 300], [300, 2000]]
 DATA_PATH = os.environ['DATA']
 
@@ -74,34 +75,37 @@ def get_freqs_method_dict(scans: List[str], windows: List[int]) -> Dict[str, obj
 def get_standard_method_dict(scans: List[str], windows: List[int]) -> Dict[str, object]:
     scans_with_not_empty_mask = []
     for scan in scans:
-        mask = open_dcm_mask(get_y_fn(scan))
+        mask = open_dcm_mask(get_y_fn(scan)).data
         if mask.sum() > 0:
             scans_with_not_empty_mask.append(scan)
 
+    open_dcm_image = open_dcm_image_factory({WINDOWS: windows})
+
     sums = []
     for scan in scans_with_not_empty_mask:
-        sums.append(open_dcm_image(scan).sum(axis=(1, 2)))
+        sums.append(open_dcm_image(scan).data.sum(axis=(1, 2)))
 
     stacked_sums = torch.stack(sums)
-    means = stacked_sums.sum(axis=0) / (512 * 512 * len(scans_with_not_empty_mask))
+    n_samples = 512 * 512 * len(scans_with_not_empty_mask)
+    means = stacked_sums.sum(axis=0) / n_samples
 
     variances = []
     for scan in scans_with_not_empty_mask:
         variances.append(
-            ((open_dcm_image(scan) - means[..., None, None]) ** 2).sum(axis=(1, 2))
+            ((open_dcm_image(scan).data - means[..., None, None]) ** 2).sum(axis=(1, 2))
         )
 
-    stds = torch.sqrt(1 / (sum(counts) - 1) * torch.stack(variances).sum(axis=(0)))
+    stds = torch.sqrt(1 / (n_samples - 1) * torch.stack(variances).sum(axis=(0)))
 
-    return {WINDOWS: windows, NORM_STATS: (means, stds)}
+    return {WINDOWS: windows, NORM_STATS: (means.tolist(), stds.tolist())}
 
 
 folds = []
 kfold = KFold(N_FOLDS, shuffle=True, random_state=SEED)
 for train_index, val_index in kfold.split(patients):
     result = {}
-    # TODO remove [:2] after confirming it's working
-    train_patients = patients[train_index][:2]
+
+    train_patients = patients[train_index]
     val_patients = patients[val_index]
     print(val_patients)
 
@@ -111,13 +115,19 @@ for train_index, val_index in kfold.split(patients):
     scans = get_scans(data_path, patients=train_patients)
 
     # freqs
-    # result[FREQS_NO_LIMIT_WINDOWS] = get_freqs_method_dict(scans, None)
-    # result[FREQS_LIMIT_WINDOWS] = get_freqs_method_dict(scans, STANDARD_WINDOWS)
+    result[FREQS_NO_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, None))
+    result[FREQS_LIMIT_WINDOWS] = json.dumps(
+        get_freqs_method_dict(scans, STANDARD_WINDOWS[0])
+    )
 
-    result[SIMPLE_WINDOW_SMALL] = get_standard_method_dict(scans, STANDARD_WINDOWS)
-    result[SIMPLE_MULTIPLE_WINDOWS] = get_standard_method_dict(scans, EXTENDED_WINDOWS)
+    # simple
+    result[SIMPLE_WINDOW_SMALL] = json.dumps(
+        get_standard_method_dict(scans, STANDARD_WINDOWS)
+    )
+    result[SIMPLE_MULTIPLE_WINDOWS] = json.dumps(
+        get_standard_method_dict(scans, EXTENDED_WINDOWS)
+    )
 
-    get_standard_method_dict
     folds.append(result)
     print(result)
 
