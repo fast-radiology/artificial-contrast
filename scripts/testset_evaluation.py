@@ -83,6 +83,5 @@ learn.load(MODEL_NAME)
 
 eval_df = evaluate_patients(learn, test_patients, IMG_SIZE)
 
+print(eval_df.describe())
 print(eval_df)
-# TODO: aggregate all results into DF
-print(f"mean: {eval_df[DICE_NAME].mean()}, std: {eval_df[DICE_NAME].std()}")

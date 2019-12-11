@@ -75,6 +75,8 @@ DCM_LOAD_FUNC = {
 scans = get_scans(data_path)
 folds_df = pd.DataFrame(FOLDS_PATH)
 
+results = []
+
 for idx, fold in folds_df.iterrows():
     conf = json.loads(fold[EXPERIMENT_NAME])
     open_dcm_image_func = DCM_LOAD_FUNC[EXPERIMENT_NAME](conf)
@@ -94,8 +96,14 @@ for idx, fold in folds_df.iterrows():
     learn.fit_one_cycle(10, 1e-4)
 
     fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
+    result = {
+        'fold': idx,
+        'mean': fold_results_df[DICE_NAME].mean(),
+        'std': fold_results_df[DICE_NAME].std(),
+    }
+    results.append(result)
+
+    print(result)
     print(fold_results_df)
-    # TODO: aggregate all results into DF
-    print(
-        f"mean: {fold_results_df[DICE_NAME].mean()}, std: {fold_results_df[DICE_NAME].std()}"
-    )
+
+print(pd.DataFrame(results))

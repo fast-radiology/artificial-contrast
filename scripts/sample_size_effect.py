@@ -53,18 +53,20 @@ open_image = open_dcm_image_func
 # EXPERIMENT
 
 patients = get_patients(data_path)
+results = []
 
 for sample_size in SAMPLE_SIZES:
     print(f'Sample size: {sample_size}')
 
     # Or maybe do K-fold here too..
-    for i in range(SAMPLING_ROUNDS):
+    for sampling_round in range(SAMPLING_ROUNDS):
 
         sampled_patients = sample(patients, sample_size)
-        print(f'{i} sampled patients: {sampled_patients}')
+        print(f'{sampling_round} sampled patients: {sampled_patients}')
         scans = get_scans(data_path, patients=sampled_patients)
 
         kfold = KFold(PER_SAMPLE_FOLDS, shuffle=True, random_state=SEED)
+        fold_idx = 0
         for train_index, val_index in kfold.split(sampled_patients):
             validation_patients = sampled_patients[val_index]
             print('Validation patients: ', validation_patients)
@@ -80,7 +82,22 @@ for sample_size in SAMPLE_SIZES:
 
             learn.fit_one_cycle(10, 1e-4)
 
-            eval_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
-            print(eval_df)
-            # TODO: aggregate all results into DF
-            print(f"mean: {eval_df[DICE_NAME].mean()}, std: {eval_df[DICE_NAME].std()}")
+            fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
+
+            result = {
+                'sample_size': sample_size,
+                'sampling_round': sampling_round,
+                'fold': fold_idx,
+                'mean': fold_results_df[DICE_NAME].mean(),
+                'std': fold_results_df[DICE_NAME].std(),
+            }
+            results.append(result)
+            fold_idx += 1
+
+            print(result)
+            print(fold_results_df)
+            
+
+results_df = pd.DataFrame(results)
+print (results_df)
+print (results_df.groupby(['sample_size']))
