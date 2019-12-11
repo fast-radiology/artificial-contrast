@@ -1,6 +1,8 @@
 import os
+
 # import argparse
 import json
+import ast
 
 from fast_radiology.seed import random_seed
 from artificial_contrast.const import SEED
@@ -76,6 +78,7 @@ scans = get_scans(data_path)
 folds_df = pd.read_csv(FOLDS_PATH, encoding='utf-8')
 
 results = []
+by_patient_results = []
 
 for idx, fold in folds_df.iterrows():
     conf = json.loads(fold[EXPERIMENT_NAME])
@@ -85,7 +88,7 @@ for idx, fold in folds_df.iterrows():
     fastai.vision.data.open_image = open_dcm_image_func
     open_image = open_dcm_image_func
 
-    validation_patients = fold[VALIDATION_PATIENTS]
+    validation_patients = ast.literal_eval(fold[VALIDATION_PATIENTS])
     print('Validation patients: ', validation_patients)
 
     data = get_data(
@@ -102,8 +105,15 @@ for idx, fold in folds_df.iterrows():
         'std': fold_results_df[DICE_NAME].std(),
     }
     results.append(result)
+    by_patient_results.append(fold_results_df)
 
     print(result)
     print(fold_results_df)
 
-print(pd.DataFrame(results))
+df = pd.DataFrame(results)
+df.to_csv(f"{EXPERIMENT_NAME}_result.csv", index=False, encoding='utf-8')
+
+by_patient_result_df = pd.concat(by_patient_results)
+by_patient_result_df.to_csv(
+    f"{EXPERIMENT_NAME}_by_patient_result.csv", index=False, encoding='utf-8'
+)
