@@ -100,4 +100,3 @@ for sample_size in SAMPLE_SIZES:
 
 results_df = pd.DataFrame(results)
 print (results_df)
-print (results_df.groupby(['sample_size']))
