@@ -112,6 +112,7 @@ for idx, fold in folds_df.iterrows():
     print(fold_results_df)
 
 df = pd.DataFrame(results)
+print (df)
 df.to_csv(
     os.path.join(RESULTS_PATH, f"{EXPERIMENT_NAME}_result.csv"),
     index=False,
@@ -119,6 +120,7 @@ df.to_csv(
 )
 
 by_patient_result_df = pd.concat(by_patient_results)
+print (by_patient_result_df)
 by_patient_result_df.to_csv(
     os.path.join(RESULTS_PATH, f"{EXPERIMENT_NAME}_by_patient_result.csv"),
     index=False,

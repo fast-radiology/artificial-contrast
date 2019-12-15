@@ -36,6 +36,7 @@ DATA_PATH = os.environ['DATA']
 TEST_DATA_PATH = os.environ['TEST_DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 MODEL_NAME = os.environ['MODEL_NAME']
+RESULTS_PATH = os.environ['RESULTS']
 
 data_path = Path(DATA_PATH)
 test_data_path = Path(TEST_DATA_PATH)
@@ -85,3 +86,8 @@ eval_df = evaluate_patients(learn, test_patients, IMG_SIZE)
 
 print(eval_df.describe())
 print(eval_df)
+eval_df.to_csv(
+    os.path.join(RESULTS_PATH, f"{MODEL_NAME}_testset_result.csv"),
+    index=False,
+    encoding='utf-8',
+)

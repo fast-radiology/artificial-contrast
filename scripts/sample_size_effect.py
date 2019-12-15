@@ -33,6 +33,7 @@ open_mask = open_dcm_mask
 HOME_PATH = os.environ['HOME']
 DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
+RESULTS_PATH = os.environ['RESULTS']
 
 data_path = Path(DATA_PATH)
 
@@ -100,3 +101,8 @@ for sample_size in SAMPLE_SIZES:
 
 results_df = pd.DataFrame(results)
 print (results_df)
+results_df.to_csv(
+    os.path.join(RESULTS_PATH, f"samplesize_effect_result.csv"),
+    index=False,
+    encoding='utf-8',
+)
