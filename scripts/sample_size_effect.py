@@ -81,6 +81,7 @@ for sample_size in SAMPLE_SIZES:
             )
             learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 
+            learn.unfreeze()
             learn.fit_one_cycle(20, 1e-4)
 
             fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)

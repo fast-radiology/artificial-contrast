@@ -63,6 +63,7 @@ data = get_data(
 )
 learn = get_learner(data, metrics=[], model_save_path=MODEL_SAVE_PATH)
 
+learn.unfreeze()
 learn.fit_one_cycle(20, 1e-4)
 learn.save(MODEL_NAME)
 
