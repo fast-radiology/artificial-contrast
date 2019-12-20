@@ -59,6 +59,7 @@ FOLDS_PATH = os.environ['FOLDS']
 data_path = Path(DATA_PATH)
 
 EXPERIMENT_NAME = os.environ['EXPERIMENT_NAME']
+print (EXPERIMENT_NAME)
 
 IMG_SIZE = 512
 BS = 20
