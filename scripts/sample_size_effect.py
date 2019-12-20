@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 from fastai.vision import *
 from fastai.distributed import *
-from sklearn.model_selection import KFold
 
 from artificial_contrast.dicom import open_dcm_mask
 from artificial_contrast.freqs import (
@@ -37,9 +36,9 @@ RESULTS_PATH = os.environ['RESULTS']
 
 data_path = Path(DATA_PATH)
 
-SAMPLE_SIZES = [30, 60, 90, 120]
-SAMPLING_ROUNDS = 5
-PER_SAMPLE_FOLDS = 5
+SAMPLE_SIZES = [40, 60, 80, 100, 120]
+SAMPLING_ROUNDS = 3
+VALIDATION_SET_SIZE = 12
 
 IMG_SIZE = 512
 BS = 20
@@ -59,49 +58,45 @@ results = []
 for sample_size in SAMPLE_SIZES:
     print(f'Sample size: {sample_size}')
 
-    # Or maybe do K-fold here too..
     for sampling_round in range(SAMPLING_ROUNDS):
-
         sampled_patients = sample(patients, sample_size)
         print(f'{sampling_round} sampled patients: {sampled_patients}')
+
+        validation_patients = sample(sampled_patients, VALIDATION_SET_SIZE)
+        print('Validation patients: ', validation_patients)
+
         scans = get_scans(data_path, patients=sampled_patients)
 
-        kfold = KFold(PER_SAMPLE_FOLDS, shuffle=True, random_state=SEED)
-        fold_idx = 0
-        for train_index, val_index in kfold.split(sampled_patients):
-            validation_patients = sampled_patients[val_index]
-            print('Validation patients: ', validation_patients)
+        data = get_data(
+            scans,
+            HOME_PATH,
+            validation_patients,
+            normalize_stats=conf[NORM_STATS],
+            bs=BS,
+        )
+        learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 
-            data = get_data(
-                scans,
-                HOME_PATH,
-                validation_patients,
-                normalize_stats=conf[NORM_STATS],
-                bs=BS,
-            )
-            learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
+        learn.unfreeze()
+        learn.fit_one_cycle(16, 1e-4)
 
-            learn.unfreeze()
-            learn.fit_one_cycle(20, 1e-4)
+        round_eval_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
 
-            fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
+        result = {
+            'sample_size': sample_size,
+            'sampling_round': sampling_round,
+            'mean': round_eval_df[DICE_NAME].mean(),
+            'std': round_eval_df[DICE_NAME].std(),
+            'min': round_eval_df[DICE_NAME].min(),
+            'max': round_eval_df[DICE_NAME].max(),
+        }
+        results.append(result)
 
-            result = {
-                'sample_size': sample_size,
-                'sampling_round': sampling_round,
-                'fold': fold_idx,
-                'mean': fold_results_df[DICE_NAME].mean(),
-                'std': fold_results_df[DICE_NAME].std(),
-            }
-            results.append(result)
-            fold_idx += 1
+        print(result)
+        print(round_eval_df)
 
-            print(result)
-            print(fold_results_df)
-            
 
 results_df = pd.DataFrame(results)
-print (results_df)
+print(results_df)
 results_df.to_csv(
     os.path.join(RESULTS_PATH, f"samplesize_effect_result.csv"),
     index=False,
