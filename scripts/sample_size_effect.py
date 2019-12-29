@@ -1,4 +1,5 @@
 import os
+import argparse
 import json
 from random import sample
 
@@ -26,6 +27,13 @@ from artificial_contrast.evaluate import evaluate_patients
 fastai.vision.image.open_mask = open_dcm_mask
 fastai.vision.data.open_mask = open_dcm_mask
 open_mask = open_dcm_mask
+
+# Distributed
+parser = argparse.ArgumentParser()
+parser.add_argument("--local_rank", type=int)
+args = parser.parse_args()
+torch.cuda.set_device(args.local_rank)
+torch.distributed.init_process_group(backend='nccl', init_method='env://')
 
 # Config
 
@@ -75,6 +83,7 @@ for sample_size in SAMPLE_SIZES:
             bs=BS,
         )
         learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
+        learn = learn.to_distributed(args.local_rank)
 
         learn.unfreeze()
         learn.fit_one_cycle(16, 1e-4)

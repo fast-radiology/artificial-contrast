@@ -1,6 +1,6 @@
 import os
 
-# import argparse
+import argparse
 import json
 
 from fast_radiology.seed import random_seed
@@ -41,12 +41,12 @@ fastai.vision.data.open_mask = open_dcm_mask
 open_mask = open_dcm_mask
 
 
-# To explore later
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--local_rank", type=int)
-# args = parser.parse_args()
-# torch.cuda.set_device(args.local_rank)
-# torch.distributed.init_process_group(backend='nccl', init_method='env://')
+# Distributed
+parser = argparse.ArgumentParser()
+parser.add_argument("--local_rank", type=int)
+args = parser.parse_args()
+torch.cuda.set_device(args.local_rank)
+torch.distributed.init_process_group(backend='nccl', init_method='env://')
 
 
 # Config
@@ -96,6 +96,7 @@ for idx, fold in folds_df.iterrows():
         scans, HOME_PATH, validation_patients, normalize_stats=conf[NORM_STATS], bs=BS
     )
     learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
+    learn = learn.to_distributed(args.local_rank)
 
     learn.unfreeze()
     learn.fit_one_cycle(16, 1e-4)
