@@ -36,14 +36,14 @@ RESULTS_PATH = os.environ['RESULTS']
 
 data_path = Path(DATA_PATH)
 
-SAMPLE_SIZES = [40, 60, 80, 100, 120]
+SAMPLE_SIZES = [25, 50, 75, 100]
 SAMPLING_ROUNDS = 3
-VALIDATION_SET_SIZE = 12
 
 IMG_SIZE = 512
 BS = 20
 
 DCM_CONF = json.loads(os.environ['DCM_CONF'])
+VALIDATION_PATIENTS = json.loads(os.environ['VALIDATION_PATIENTS'])
 
 open_dcm_image_func = freqs_open_dcm_image_factory(DCM_CONF)
 fastai.vision.image.open_image = open_dcm_image_func
@@ -53,25 +53,28 @@ open_image = open_dcm_image_func
 # EXPERIMENT
 
 patients = get_patients(data_path)
+training_patients = [p for p in patients if p not in VALIDATION_PATIENTS]
+print(
+    f'patients: {len(patients)}, training: {len(training_patients)}, validation: {len(VALIDATION_PATIENTS)}'
+)
+print(f'validation patients: {VALIDATION_PATIENTS}')
+
 results = []
 
 for sample_size in SAMPLE_SIZES:
     print(f'Sample size: {sample_size}')
 
     for sampling_round in range(SAMPLING_ROUNDS):
-        sampled_patients = sample(patients, sample_size)
+        sampled_patients = sample(training_patients, sample_size)
         print(f'{sampling_round} sampled patients: {sampled_patients}')
 
-        validation_patients = sample(sampled_patients, VALIDATION_SET_SIZE)
-        print('Validation patients: ', validation_patients)
-
-        scans = get_scans(data_path, patients=sampled_patients)
+        scans = get_scans(data_path, patients=sampled_patients + VALIDATION_PATIENTS)
 
         data = get_data(
             scans,
             HOME_PATH,
-            validation_patients,
-            normalize_stats=conf[NORM_STATS],
+            VALIDATION_PATIENTS,
+            normalize_stats=DCM_CONF[NORM_STATS],
             bs=BS,
         )
         learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
@@ -79,7 +82,7 @@ for sample_size in SAMPLE_SIZES:
         learn.unfreeze()
         learn.fit_one_cycle(16, 1e-4)
 
-        round_eval_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
+        round_eval_df = evaluate_patients(learn, VALIDATION_PATIENTS, IMG_SIZE)
 
         result = {
             'sample_size': sample_size,
