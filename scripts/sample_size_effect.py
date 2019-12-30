@@ -15,8 +15,8 @@ from fastai.vision import *
 from fastai.distributed import *
 
 from artificial_contrast.dicom import open_dcm_mask
-from artificial_contrast.freqs import (
-    open_dcm_img_factory as freqs_open_dcm_image_factory,
+from artificial_contrast.dicom import (
+    open_dcm_image_factory as simple_open_dcm_image_factory,
 )
 from artificial_contrast.data import get_scans, get_data, get_patients
 from artificial_contrast.learner import get_learner
@@ -45,7 +45,7 @@ BS = 20
 DCM_CONF = json.loads(os.environ['DCM_CONF'])
 VALIDATION_PATIENTS = json.loads(os.environ['VALIDATION_PATIENTS'])
 
-open_dcm_image_func = freqs_open_dcm_image_factory(DCM_CONF)
+open_dcm_image_func = simple_open_dcm_image_factory(DCM_CONF)
 fastai.vision.image.open_image = open_dcm_image_func
 fastai.vision.data.open_image = open_dcm_image_func
 open_image = open_dcm_image_func
