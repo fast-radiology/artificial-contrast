@@ -59,7 +59,7 @@ validation_patients = []
 print('Validation patients: ', validation_patients)
 
 data = get_data(
-    scans, HOME_PATH, validation_patients, normalize_stats=conf[NORM_STATS], bs=BS
+    scans, HOME_PATH, validation_patients, normalize_stats=DCM_CONF[NORM_STATS], bs=BS
 )
 learn = get_learner(data, metrics=[], model_save_path=MODEL_SAVE_PATH)
 
@@ -78,7 +78,7 @@ print('Test patients: ', test_patients)
 
 test_scans = get_scans(test_data_path, patients=test_patients)
 test_data = get_data(
-    test_scans, HOME_PATH, test_patients, normalize_stats=conf[NORM_STATS], bs=BS
+    test_scans, HOME_PATH, test_patients, normalize_stats=DCM_CONF[NORM_STATS], bs=BS
 )
 learn = get_learner(test_data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 learn.load(MODEL_NAME)
