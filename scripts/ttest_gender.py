@@ -32,9 +32,11 @@ print(df.gender.value_counts())
 male_df = df[df.gender == 'M']
 female_df = df[df.gender == 'F']
 
+plt.figure()
 male_df.dice.hist(bins=20)
 plt.savefig('male.png')
 
+plt.figure()
 female_df.dice.hist(bins=20)
 plt.savefig('female.png')
 
