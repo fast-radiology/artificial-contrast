@@ -12,6 +12,12 @@ def read_HU_array(fn):
     return dcm.pixel_array.astype(np.float32) * dcm.RescaleSlope + dcm.RescaleIntercept
 
 
+def get_patient_sex(fn):
+    if not isinstance(fn, str):
+        fn = str(fn)
+    return pydicom.dcmread(fn).PatientSex
+
+
 def _normalize(array, window_min, window_max):
     return ((array - window_min) / (window_max - window_min) * (255 - 0) + 0).astype(
         np.uint8
