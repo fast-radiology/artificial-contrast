@@ -3,6 +3,7 @@ SEED = 42
 BC_NAME = 'BC'
 LABEL_NAME = 'label'
 FOLDS_NAME = 'folds.csv'
+DCM_CONF_NAME = 'dcm_conf.json'
 
 VALIDATION_PATIENTS = 'validation_patients'
 TRAIN_PATIENTS = 'train_patients'

@@ -24,6 +24,7 @@ from artificial_contrast.freqs import (
     get_freqs_array,
 )
 from artificial_contrast.const import (
+    DCM_CONF_NAME,
     FOLDS_NAME,
     FREQS_LIMIT_WINDOWS,
     FREQS_NO_LIMIT_WINDOWS,
@@ -133,3 +134,18 @@ for train_index, val_index in kfold.split(patients):
 
 
 pd.DataFrame(folds).to_csv(FOLDS_NAME, encoding='utf-8', index=False)
+
+scans = get_scans(data_path)
+result = {}
+result[FREQS_NO_LIMIT_WINDOWS] = json.dumps(get_freqs_method_dict(scans, None))
+result[FREQS_LIMIT_WINDOWS] = json.dumps(
+    get_freqs_method_dict(scans, STANDARD_WINDOWS[0])
+)
+result[SIMPLE_WINDOW_SMALL] = json.dumps(
+    get_standard_method_dict(scans, STANDARD_WINDOWS)
+)
+result[SIMPLE_MULTIPLE_WINDOWS] = json.dumps(
+    get_standard_method_dict(scans, EXTENDED_WINDOWS)
+)
+with open(DCM_CONF_NAME, 'w') as fp:
+    json.dump(result, fp)
