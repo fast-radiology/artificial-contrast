@@ -19,10 +19,7 @@ from artificial_contrast.dicom import (
 )
 from artificial_contrast.data import get_scans, get_data, get_patients
 from artificial_contrast.learner import get_learner
-from artificial_contrast.const import (
-    DICE_NAME,
-    NORM_STATS,
-)
+from artificial_contrast.const import DICE_NAME, NORM_STATS
 from artificial_contrast.evaluate import evaluate_patients
 
 fastai.vision.image.open_mask = open_dcm_mask
@@ -71,14 +68,18 @@ learn.save(MODEL_NAME)
 # TEST (or maybe split to two scripts)
 
 # Extra checks, remove after running successfully
-del scans, data, data_path, validation_patients, learn
+del data, data_path, validation_patients, learn
 
 test_patients = get_patients(test_data_path)
 print('Test patients: ', test_patients)
 
 test_scans = get_scans(test_data_path, patients=test_patients)
 test_data = get_data(
-    test_scans, HOME_PATH, test_patients, normalize_stats=DCM_CONF[NORM_STATS], bs=BS
+    scans[:10] + test_scans,
+    HOME_PATH,
+    test_patients,
+    normalize_stats=DCM_CONF[NORM_STATS],
+    bs=BS,
 )
 learn = get_learner(test_data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 learn.load(MODEL_NAME)
