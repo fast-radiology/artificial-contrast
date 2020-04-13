@@ -1,3 +1,20 @@
+# Config
+# Set the data paths manually
+
+HOME_PATH = ''
+DATA_PATH = '/training_data/'
+TEST_DATA_PATH = '/test_data/'
+MODEL_SAVE_PATH = '/trained_models/'
+RESULTS_PATH = '/results/'
+
+# Set the model name for saving after training
+MODEL_NAME = 'trained_model'
+
+# Model parameters
+IMG_SIZE = 512
+BS = 20
+NORM_STATS = [[0.191989466547966, 0.1603623628616333, 0.02605995163321495], [0.3100860118865967, 0.2717258334159851, 0.1233396977186203]]
+
 import os
 import json
 
@@ -43,30 +60,12 @@ def open_dcm_image_factory(conf):
 
     return open_dcm_image
 
-# Config
-# Set the data paths manually
-
-HOME_PATH = '' #co tu domyślnie wpisać
-
-DATA_PATH = '/training_data/'
-TEST_DATA_PATH = '/test_data/'
-MODEL_SAVE_PATH = '/trained_models/'
-RESULTS_PATH = '/results/'
-
-# Set the model name for saving after training
-MODEL_NAME = 'trained_model'
-
-
-
 data_path = Path(DATA_PATH)
 test_data_path = Path(TEST_DATA_PATH)
 
-IMG_SIZE = 512
-BS = 20
-NORM_STATS = [[0.191989466547966, 0.1603623628616333, 0.02605995163321495], [0.3100860118865967, 0.2717258334159851, 0.1233396977186203]]
 
-#posprzatac to ponizej, chyba nam nie potrzebne, hardkodowalem wartosci z tego json
-DCM_CONF = json.loads(os.environ['DCM_CONF'])
+
+#DCM_CONF = json.loads(os.environ['DCM_CONF'])
 
 # open_dcm_image_func = simple_open_dcm_image_factory(DCM_CONF)
 open_dcm_image_func = open_dcm_image_factory
@@ -75,7 +74,6 @@ fastai.vision.data.open_image = open_dcm_image_func
 open_image = open_dcm_image_func
 
 # TRAIN
-
 scans = get_scans(data_path)
 
 validation_patients = []
