@@ -41,17 +41,9 @@ fastai.vision.data.open_mask = open_dcm_mask
 open_mask = open_dcm_mask
 
 
-# To explore later
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--local_rank", type=int)
-# args = parser.parse_args()
-# torch.cuda.set_device(args.local_rank)
-# torch.distributed.init_process_group(backend='nccl', init_method='env://')
-
-
 # Config
 
-HOME_PATH = os.environ['HOME']
+HOME_PATH = os.environ['REPO']
 DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 RESULTS_PATH = os.environ['RESULTS']
@@ -59,10 +51,11 @@ FOLDS_PATH = os.environ['FOLDS']
 data_path = Path(DATA_PATH)
 
 EXPERIMENT_NAME = os.environ['EXPERIMENT_NAME']
-print (EXPERIMENT_NAME)
+print(EXPERIMENT_NAME)
 
 IMG_SIZE = 512
-BS = 20
+BS = int(os.environ.get('BS', 20))
+NUM_EPOCHS = int(os.environ.get('NUM_EPOCHS', 16))
 
 
 DCM_LOAD_FUNC = {
@@ -98,7 +91,7 @@ for idx, fold in folds_df.iterrows():
     learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
 
     learn.unfreeze()
-    learn.fit_one_cycle(16, 1e-4)
+    learn.fit_one_cycle(NUM_EPOCHS, 1e-4)
 
     fold_results_df = evaluate_patients(learn, validation_patients, IMG_SIZE)
     result = {
@@ -113,7 +106,7 @@ for idx, fold in folds_df.iterrows():
     print(fold_results_df)
 
 df = pd.DataFrame(results)
-print (df)
+print(df)
 df.to_csv(
     os.path.join(RESULTS_PATH, f"{EXPERIMENT_NAME}_result.csv"),
     index=False,
@@ -121,7 +114,7 @@ df.to_csv(
 )
 
 by_patient_result_df = pd.concat(by_patient_results)
-print (by_patient_result_df)
+print(by_patient_result_df)
 by_patient_result_df.to_csv(
     os.path.join(RESULTS_PATH, f"{EXPERIMENT_NAME}_by_patient_result.csv"),
     index=False,
