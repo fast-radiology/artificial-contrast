@@ -27,7 +27,7 @@ Each patient should have `BC` directory with non-contrast examinations and `labe
     1. `$ ./examples/cv_simple_window.sh` Preprocessing approach: simple, Configuration: Radiodensity range from -100 HU to 300 HU on all 3 channels. Results in:
         - `./results/simple_window_-100_300_result.csv`
         - `./results/simple_window_-100_300_by_patient_result.csv`
-    2. `$ ./examples/cv_simple_multi_windows.sh` Preprocessing approach: simple, Configuration: Radiodensity range: (-40, 120), (-100, 300), (300, 2000) HU. Results in:
+    2. `$ ./examples/cv_simple_multiple_windows.sh` Preprocessing approach: simple, Configuration: Radiodensity range: (-40, 120), (-100, 300), (300, 2000) HU. Results in:
         - `./results/simple_multiple_windows_result.csv`
         - `./results/simple_multiple_windows_by_patient_result.csv`
     3. `$ ./examples/cv_uniform_no_limit.sh` Preprocessing approach: Uniform, Configuration: Without clipping radiodensity range. Results in:
