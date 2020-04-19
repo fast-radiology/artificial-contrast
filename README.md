@@ -36,7 +36,7 @@ Each patient should have `BC` directory with non-contrast examinations and `labe
     4. `$ ./examples/cv_uniform_window.sh` Preprocessing approach: Uniform, Configuration: Radiodensity range from-100 HU to 300 HU
         - `./results/freqs_window_-100_300_result.csv`
         - `./results/freqs_window_-100_300_by_patient_result.csv`
-3. Train model chosen using CV using whole training set and evaluate its performance using test set. (In our case the best model was: Preprocessing approach: simple, Configuration: Radiodensity range: (-40, 120), (-100, 300), (300, 2000) HU.): `$ ./examples/`. NOTE we used: `export DCM_CONF="{\"windows\": [[-40, 120], [-100, 300], [300, 2000]], \"norm_stats\": [[0.191989466547966, 0.1603623628616333, 0.02605995163321495], [0.3100860118865967, 0.2717258334159851, 0.1233396977186203]]}"` (this is one of parameters created in first step). Final result can be found in: `./results/simple_multiple_windows_testset_result.csv`
+3. Train model chosen using CV using whole training set and evaluate its performance using test set. (In our case the best model was: Preprocessing approach: simple, Configuration: Radiodensity range: (-40, 120), (-100, 300), (300, 2000) HU.): `$ ./examples/test.sh`. <br> NOTE we used: `export DCM_CONF="{\"windows\": [[-40, 120], [-100, 300], [300, 2000]], \"norm_stats\": [[0.191989466547966, 0.1603623628616333, 0.02605995163321495], [0.3100860118865967, 0.2717258334159851, 0.1233396977186203]]}"` (this is one of parameters created in first step). <br> Final result can be found in: `./results/simple_multiple_windows_testset_result.csv`
 
 
 ## Final model weights
