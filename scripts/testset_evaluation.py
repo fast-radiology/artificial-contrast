@@ -28,7 +28,7 @@ open_mask = open_dcm_mask
 
 # Config
 
-HOME_PATH = os.environ['HOME']
+HOME_PATH = os.environ['REPO']
 DATA_PATH = os.environ['DATA']
 TEST_DATA_PATH = os.environ['TEST_DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
@@ -39,7 +39,8 @@ data_path = Path(DATA_PATH)
 test_data_path = Path(TEST_DATA_PATH)
 
 IMG_SIZE = 512
-BS = 20
+BS = int(os.environ.get('BS', 20))
+NUM_EPOCHS = int(os.environ.get('NUM_EPOCHS', 16))
 
 DCM_CONF = json.loads(os.environ['DCM_CONF'])
 
@@ -61,7 +62,7 @@ data = get_data(
 learn = get_learner(data, metrics=[], model_save_path=MODEL_SAVE_PATH)
 
 learn.unfreeze()
-learn.fit_one_cycle(16, 1e-4)
+learn.fit_one_cycle(NUM_EPOCHS, 1e-4)
 learn.save(MODEL_NAME)
 
 

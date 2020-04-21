@@ -40,10 +40,11 @@ from artificial_contrast.const import (
 from sklearn.model_selection import KFold
 
 
-N_FOLDS = 10
+N_FOLDS = int(os.environ.get('N_FOLDS', 10))
 STANDARD_WINDOWS = [[-100, 300], [-100, 300], [-100, 300]]
 EXTENDED_WINDOWS = [[-40, 120], [-100, 300], [300, 2000]]
 DATA_PATH = os.environ['DATA']
+RESULTS_PATH = os.environ.get('RESULTS', '')
 
 data_path = Path(DATA_PATH)
 patients = np.array(get_patients(data_path))
@@ -110,8 +111,8 @@ for train_index, val_index in kfold.split(patients):
     val_patients = patients[val_index]
     print(val_patients)
 
-    result[TRAIN_PATIENTS] = train_patients.tolist()
-    result[VALIDATION_PATIENTS] = val_patients.tolist()
+    result[TRAIN_PATIENTS] = json.dumps(train_patients.tolist())
+    result[VALIDATION_PATIENTS] = json.dumps(val_patients.tolist())
 
     scans = get_scans(data_path, patients=train_patients)
 
@@ -132,8 +133,7 @@ for train_index, val_index in kfold.split(patients):
     folds.append(result)
     print(result)
 
-
-pd.DataFrame(folds).to_csv(FOLDS_NAME, encoding='utf-8', index=False)
+pd.DataFrame(folds).to_csv(RESULTS_PATH + FOLDS_NAME, encoding='utf-8', index=False)
 
 scans = get_scans(data_path)
 result = {}
@@ -147,5 +147,5 @@ result[SIMPLE_WINDOW_SMALL] = json.dumps(
 result[SIMPLE_MULTIPLE_WINDOWS] = json.dumps(
     get_standard_method_dict(scans, EXTENDED_WINDOWS)
 )
-with open(DCM_CONF_NAME, 'w') as fp:
+with open(RESULTS_PATH + DCM_CONF_NAME, 'w') as fp:
     json.dump(result, fp)

@@ -29,7 +29,7 @@ open_mask = open_dcm_mask
 
 # Config
 
-HOME_PATH = os.environ['HOME']
+HOME_PATH = os.environ['REPO']
 DATA_PATH = os.environ['DATA']
 MODEL_SAVE_PATH = os.environ['MODEL_SAVE']
 RESULTS_PATH = os.environ['RESULTS']

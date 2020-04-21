@@ -105,3 +105,11 @@ venv.bak/
 
 #editor
 .vscode/
+
+.DS_Store
+
+# results
+results/*_result.csv
+results/models/*.pth
+results/config/*.json
+results/config/*.csv
