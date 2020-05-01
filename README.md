@@ -41,4 +41,4 @@ Each patient should have `BC` directory with non-contrast examinations and `labe
 
 ## Final model weights
 
-Model weights are available [here](https://storage.cloud.google.com/public-fast-radiology/artificial_contrast_simple_multiple_windows.pth)
+Model weights are available [here](https://www.dropbox.com/s/4w4hjet84cnmoeb/artificial_contrast_simple_multiple_windows.pth)
