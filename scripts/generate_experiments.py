@@ -138,7 +138,7 @@ for train_index, val_index in kfold.split(patients):
         get_standard_method_dict(scans, SINGLE_WINDOWS)
     )
     result[SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET] = json.dumps(
-        get_standard_method_dict(scans, STANDARD_WINDOWS)
+        get_standard_method_dict(scans, EXTENDED_WINDOWS)
     )
 
     folds.append(result)
