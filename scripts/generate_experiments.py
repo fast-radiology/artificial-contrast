@@ -31,6 +31,8 @@ from artificial_contrast.const import (
     FREQS,
     NORM_STATS,
     SIMPLE_MULTIPLE_WINDOWS,
+    SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET,
+    SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET,
     SIMPLE_WINDOW_SMALL,
     TRAIN_PATIENTS,
     VALIDATION_PATIENTS,
@@ -42,6 +44,7 @@ from sklearn.model_selection import KFold
 
 N_FOLDS = int(os.environ.get('N_FOLDS', 10))
 STANDARD_WINDOWS = [[-100, 300], [-100, 300], [-100, 300]]
+SINGLE_WINDOWS = [[-100, 300]]
 EXTENDED_WINDOWS = [[-40, 120], [-100, 300], [300, 2000]]
 DATA_PATH = os.environ['DATA']
 RESULTS_PATH = os.environ.get('RESULTS', '')
@@ -128,6 +131,14 @@ for train_index, val_index in kfold.split(patients):
     )
     result[SIMPLE_MULTIPLE_WINDOWS] = json.dumps(
         get_standard_method_dict(scans, EXTENDED_WINDOWS)
+    )
+
+    # classic unet
+    result[SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET] = json.dumps(
+        get_standard_method_dict(scans, SINGLE_WINDOWS)
+    )
+    result[SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET] = json.dumps(
+        get_standard_method_dict(scans, STANDARD_WINDOWS)
     )
 
     folds.append(result)
