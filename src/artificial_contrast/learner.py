@@ -1,7 +1,7 @@
 from fastai.vision import unet_learner, models, Learner
 
 from fast_radiology.losses import generalized_dice_loss
-from fast_radiology.models import ClassicUNet
+from fast_radiology.models.unet import ClassicUNet
 from artificial_contrast.const import (
     FREQS_LIMIT_WINDOWS,
     FREQS_NO_LIMIT_WINDOWS,
@@ -37,12 +37,12 @@ def get_learner(
     ]:
         if experiment_name == SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET:
             n_channels = 1
-        elif experiment_name == SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET:
+        elif experiment_name == SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET:
             n_channels = 3
 
         return Learner(
             data,
-            ClassicUNet(n_channels=n_channels, n_classes=2, False),
+            ClassicUNet(n_channels=n_channels, n_classes=2),
             metrics=metrics,
             loss_func=loss_func,
             path=model_save_path,
