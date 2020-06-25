@@ -16,6 +16,9 @@ SIMPLE_MULTIPLE_WINDOWS = 'simple_multiple_windows'
 FREQS_NO_LIMIT_WINDOWS = 'freqs_no_limit_window'
 FREQS_LIMIT_WINDOWS = 'freqs_window_-100_300'
 
+# Classic UNet
+SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET = 'simple_window_1channel_classic_unet'
+SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET = 'simple_window_3channel_classic_unet'
 
 # Json dict names
 WINDOWS = 'windows'

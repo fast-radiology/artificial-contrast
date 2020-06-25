@@ -31,6 +31,8 @@ from artificial_contrast.const import (
     FREQS_NO_LIMIT_WINDOWS,
     NORM_STATS,
     SIMPLE_MULTIPLE_WINDOWS,
+    SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET,
+    SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET,
     SIMPLE_WINDOW_SMALL,
     VALIDATION_PATIENTS,
 )
@@ -63,6 +65,8 @@ DCM_LOAD_FUNC = {
     SIMPLE_MULTIPLE_WINDOWS: simple_open_dcm_image_factory,
     FREQS_NO_LIMIT_WINDOWS: freqs_open_dcm_image_factory,
     FREQS_LIMIT_WINDOWS: freqs_open_dcm_image_factory,
+    SIMPLE_WINDOW_1CHANNEL_CLASSIC_UNET: simple_open_dcm_image_factory,
+    SIMPLE_WINDOW_3CHANNEL_CLASSIC_UNET: simple_open_dcm_image_factory,
 }
 
 
@@ -88,7 +92,12 @@ for idx, fold in folds_df.iterrows():
     data = get_data(
         scans, HOME_PATH, validation_patients, normalize_stats=conf[NORM_STATS], bs=BS
     )
-    learn = get_learner(data, metrics=[dice], model_save_path=MODEL_SAVE_PATH)
+    learn = get_learner(
+        data,
+        metrics=[dice],
+        model_save_path=MODEL_SAVE_PATH,
+        experiment_name=EXPERIMENT_NAME,
+    )
 
     learn.unfreeze()
     learn.fit_one_cycle(NUM_EPOCHS, 1e-4)
